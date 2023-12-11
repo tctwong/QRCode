@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>HUMBER FACILITIES REPORTING PLATFORM</title>
+
+</head>
+
+<body>
+  <div style="text-align: center;">
+    <img src="https://humber.ca/brand/sites/default/files/logos/Primary_Logo/Humber_Logo_Blue_and_Gold.png" alt=""
+      style="max-width: 50%; height: auto; padding: 30px;">
+  </div>
+
+  <div>
+    <div style="font-size: 70%; text-align: center; padding: 3px;">Welcome to</div>
+    <div style="font-size: 130%; text-align: center; padding: 3px;">Humber Facilities Reporting Platform</div>
+    <div style="font-size: 72%; text-align: center; padding: 3px; margin-left: 30px; margin-right: 30px;">To report
+      any concerns or issues, please use the form below:</div>
+  </div>
+
+  <label for="location">Location:</label>
+  <input type="text" id="location" readonly>
+
+  <div style="font-size: 130%; padding-top: 30px; text-align: center;">Please Select your issue(s):</div>
+
+  <form>
+    <label>
+      <input type="checkbox" name="issue" id="issue1" value="Water leakage">
+      Water Leakage
+    </label><br>
+
+    <label>
+      <input type="checkbox" name="issue" id="issue2" value=" Floor maintenance">
+      Floor Maintenance
+    </label><br>
+
+    <label>
+      <input type="checkbox" name="issue" id="issue3" value=" Toilet paper">
+      Toilet Paper Availability
+    </label><br>
+
+    <label>
+      <input type="checkbox" name="issue" id="issue4" value=" Trash disposal">
+      Trash Disposal
+    </label><br>
+
+    <label>
+      <input type="checkbox" name="issue" id="issue5" value=" Broken fixtures">
+      Broken Fixtures
+    </label><br>
+
+    <label>
+      <input type="checkbox" name="issue" id="issue6" value=" Cleanliness">
+      Cleanliness
+    </label>
+  </form>
+
+
+  <button id="submit" onclick="sendmail()">Submit</button>
+
+
+<!-- EMAIL-->
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
+</script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init("U-ovmTMkrkNQTYlF4");
+   })();
+</script>
+
+<script>
+  
+
+  function sendmail(){
+
+    const selectedIssues = Array.from(document.querySelectorAll('input[name="issue"]:checked'));
+
+   // Extract the values of selected issues into an array
+    const issuesArray = selectedIssues.map(issue => issue.value);
+
+    const currentDate = new Date();
+    var params = {
+      location : document.getElementById("location").value,
+      issues: issuesArray,
+      date: currentDate.toLocaleDateString(),
+      time: currentDate.toLocaleTimeString(),
+    }
+    const service_ID = "service_kgf87ys";
+  const template_ID = "template_3si5t2t";
+
+  emailjs.send(service_ID,template_ID,params)
+    .then(
+      res=> {
+        document.getElementById("location").value= "";
+        issuesArray;
+        currentDate.toLocaleDateString();
+        currentDate.toLocaleTimeString();
+        console.log(res);
+        
+
+      })
+      .catch((err) => console.log(err));
+      
+  }
+  
+  </script>
+<!-- EMAIL END-->
+
+
+
+
+  <!-- FIRE BASE-->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+    import {
+      getDatabase,
+      ref,
+      set
+    } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-database.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyARmEBLG6omQU294h_EglLxFCkCaI6PHy8",
+      authDomain: "techproject-3b4ee.firebaseapp.com",
+      projectId: "techproject-3b4ee",
+      storageBucket: "techproject-3b4ee.appspot.com",
+      messagingSenderId: "691672327983",
+      appId: "1:691672327983:web:c38a3ad9d900c5747123da"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    const db = getDatabase();
+    let location = document.getElementById("location");
+
+    // Inserting data
+    function InsertData() {
+      const currentDate = new Date();
+
+     const selectedIssues = Array.from(document.querySelectorAll('input[name="issue"]:checked'));
+
+    // Extract the values of selected issues into an array
+    const issuesArray = selectedIssues.map(issue => issue.value);
+
+      set(ref(db, "TheUsers/" + location.value), {
+        Location: location.value,
+        Issues: issuesArray,
+        Date: currentDate.toLocaleDateString(),
+        Time: currentDate.toLocaleTimeString()
+      })
+        .then(() => {
+          alert("Report Sent")
+          window.location.href = 'Thanks.html'
+        })
+
+        .catch((error) => {
+          alert("Unsuccessful, error");
+        });
+    }
+
+    // Event listener for submit button
+    document.getElementById("submit").addEventListener('click', InsertData);
+
+  </script>
+<!-- FIRE BASE-->
+
+
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Get the URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // Get the 'location' parameter from the URL
+      const locationParam = urlParams.get('location');
+
+      // Set the location field value
+      const locationField = document.getElementById('location');
+      if (locationParam) {
+        locationField.value = locationParam;
+      }
+
+    });
+  </script>
+</body>
+
+</html>
